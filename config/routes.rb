@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     get "/dashboard", to: "dashboard#show"
     resources :tutorials, only: [:create, :edit, :update, :destroy, :new] do
       resources :videos, only: [:create]
+      get '/playlists/new', to: "tutorials/playlists#new"
+      post '/playlists', to: "tutorials/playlists#create"
     end
     resources :videos, only: [:edit, :update, :destroy]
 
@@ -36,10 +38,19 @@ Rails.application.routes.draw do
   get '/video', to: 'video#show'
 
   resources :users, only: [:new, :create, :update, :edit]
+  get '/auth/github/callback', to: 'users#update'
 
   resources :tutorials, only: [:show, :index] do
     resources :videos, only: [:show, :index]
   end
 
   resources :user_videos, only:[:create, :destroy]
+
+  get "/add-friend/:login", to: "friendships#create"
+
+  get "/send_confirmation", to: "emails#new"
+  get "/invite", to: "emails#create"
+  get "/confirmed", to: "emails#update"
+  get "/activated", to: "emails#show"
+  post "/invite", to: "emails#edit"
 end

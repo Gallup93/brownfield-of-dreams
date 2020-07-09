@@ -6,6 +6,7 @@
   <ul>
     <li> <%= current_user.first_name  %> <%= current_user.last_name %> </li>
     <li> <%= current_user.email%> </li>
+    <li> <%= "Status: #{get_status}" %> </li>
   </ul>
   <section class = "bookmarks">
     <h1>Bookmarked Segments:</h1>
@@ -21,10 +22,11 @@
       </ul>
       <% end %>
   </section>
+  <% if current_user.token != nil %>
     <section>
     <h1>Github</h1>
     <ul class="repos">
-      <% @github_service.fetch_repos_for_user.each do |repo| %>
+      <% @github_service.fetch_repos_for_user(current_user.token).each do |repo| %>
       <li class="repo">
         <%= link_to repo[:name], "#{repo[:html_url]}" %>
       </li>
@@ -34,9 +36,12 @@
     <section>
     <h1>Followers:</h1>
     <ul class="followers">
-      <% @github_service.fetch_followers_for_user.each do |follower| %>
+      <% @github_service.fetch_followers_for_user(current_user.token).each do |follower| %>
       <li class="follower">
         <%= link_to follower[:login], "#{follower[:html_url]}" %>
+        <% if github_user_exists?(follower[:login]) && (already_friends?(current_user, follower[:login]) != true)%>
+          <%= link_to "Add friend", "/add-friend/#{follower[:login]}" %>
+        <% end %>
       </li>
       <% end %>
     </ul>
@@ -44,11 +49,32 @@
     <section>
     <h1>Following:</h1>
     <ul class="following">
-      <% @github_service.fetch_following_for_user.each do |follow| %>
+      <% @github_service.fetch_following_for_user(current_user.token).each do |follow| %>
       <li class="follow">
         <%= link_to follow[:login], "#{follow[:html_url]}" %>
+        <% if github_user_exists?(follow[:login]) && (already_friends?(current_user, follow[:login]) != true)%>
+          <%= link_to "Add friend", "/add-friend/#{follow[:login]}" %>
+        <% end %>
       </li>
       <% end %>
+    </ul>
+  </section>
+  <% else %>
+    <button onclick="location.href = 'https://github.com/login/oauth/authorize?client_id=d5a0931835eac87a13b5&scope=repo';">Connect to Github</button>
+  <% end %>
+    <section>
+    <h1>Friends:</h1>
+    <ul class="friends">
+      <% if current_user.friendships != [] %>
+        <% current_user.friendships.each do |friend|  %>
+          <li class="friend">
+            <%= link_to User.find(friend.friend_id).ghub_username, "/github.com/#{User.find(friend.friend_id).ghub_username}" %>
+          </li>
+        <% end %>
+      <% else %>
+        <%= "You seem lonely. You should find friends?" %>
+      <% end %>
+      <%= link_to "Send an Invite", "/invite" %>
     </ul>
   </section>
 </section>
