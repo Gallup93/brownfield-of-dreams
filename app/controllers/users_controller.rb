@@ -11,7 +11,7 @@ class UsersController < ApplicationController
     user = User.create(user_params)
     if user.save
       session[:user_id] = user.id
-      redirect_to "/send_confirmation"
+      redirect_to '/send_confirmation'
     else
       flash[:error] = 'Username already exists'
       render :new
@@ -21,15 +21,15 @@ class UsersController < ApplicationController
   def update
     code          = params[:code]
     response      = Faraday.post("https://github.com/login/oauth/access_token?client_id=#{ENV['CLIENT_ID']}&client_secret=#{ENV['CLIENT_SECRET']}&code=#{code}")
-    pairs = response.body.split("&")
+    pairs = response.body.split('&')
 
     response_hash = {}
     pairs.each do |pair|
-      key, value = pair.split("=")
+      key, value = pair.split('=')
       response_hash[key] = value
     end
 
-    token = response_hash["access_token"]
+    token = response_hash['access_token']
 
     user = User.find(current_user.id)
 
@@ -38,11 +38,10 @@ class UsersController < ApplicationController
     auth = JSON.parse(oauth_response.body)
 
     user.update_attribute(:token, token)
-    user.update_attribute(:ghub_username, auth["login"])
+    user.update_attribute(:ghub_username, auth['login'])
 
     redirect_to dashboard_path
   end
-
 
   private
 
