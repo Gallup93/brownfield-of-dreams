@@ -33,7 +33,7 @@ describe 'User' do
 
     visit "/send_confirmation"
 
-    visit "/confirmed"
+    visit "#{User.last.id}/confirmed"
 
     expect(current_path).to eq("/activated")
 

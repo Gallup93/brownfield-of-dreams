@@ -74,7 +74,7 @@
       <% else %>
         <%= "You seem lonely. You should find friends?" %>
       <% end %>
-      <%= link_to "Send an Invite", "/invite" %>
+      <%= link_to "Send an Invite", "#{current_user.id}/invite" %>
     </ul>
   </section>
 </section>

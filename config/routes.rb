@@ -49,8 +49,8 @@ Rails.application.routes.draw do
   get "/add-friend/:login", to: "friendships#create"
 
   get "/send_confirmation", to: "emails#new"
-  get "/invite", to: "emails#create"
-  get "/confirmed", to: "emails#update"
+  get "/:id/invite", to: "emails#create"
+  get "/:id/confirmed", to: "emails#update"
   get "/activated", to: "emails#show"
   post "/invite", to: "emails#edit"
 end

@@ -2,15 +2,15 @@ require 'rails_helper'
 
 describe 'User' do
   before do
-    user = create(:user)
-    user.update_attribute(:token, ENV['GITHUB_TOKEN'])
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
+    @user = create(:user)
+    @user.update_attribute(:token, ENV['GITHUB_TOKEN'])
+    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@user)
     visit "/dashboard"
   end
 
   it 'user can send invite to ghub users that have emails' do
     click_link "Send an Invite"
-    expect(current_path).to eq("/invite")
+    expect(current_path).to eq("/#{@user.id}/invite")
 
     within ".invite-form" do
       fill_in "Github handle:", with: "Gallup93"
@@ -24,7 +24,7 @@ describe 'User' do
 
   it 'user cannot send invite to ghub users without a listed emails' do
     click_link "Send an Invite"
-    expect(current_path).to eq("/invite")
+    expect(current_path).to eq("/#{@user.id}/invite")
 
     within ".invite-form" do
       fill_in 'Github handle:', with: "whitneykidd"
