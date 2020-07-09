@@ -33,7 +33,6 @@ class GithubService
     else
       false
     end
-
   end
 
   private

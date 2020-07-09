@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :tutorial_name
   helper_method :github_user_exists?
   helper_method :already_friends?
-  helper_method :get_status
+  helper_method :fetch_status
 
   add_flash_types :success
 
@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   end
 
   def github_user_exists?(login)
-    User.find_by_ghub_username(login)
+    User.find_by(ghub_username: login)
   end
 
   def already_friends?(current_user, login)
@@ -38,11 +38,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def get_status
+  def fetch_status
     if current_user.email_status
-      "Active"
+      'Active'
     else
-      "Inactive"
+      'Inactive'
     end
   end
 end
